@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>demise | free external</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- FontAwesome for icons (used sparingly) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Minimal Header -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="logo">demise</div>
+      <nav class="nav-links">
+        <button class="nav-tab active" data-tab="home">home</button>
+        <button class="nav-tab" data-tab="download">download</button>
+        <button class="nav-tab" data-tab="developer">about</button>
+      </nav>
+      <div class="nav-actions">
+        <a href="https://discord.gg/KuSTGeyHEM" target="_blank" class="discord-link-nav">
+          discord <i class="fa-brands fa-discord"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="content-container">
+
+    <!-- HOME TAB -->
+    <section id="home" class="tab-content active">
+      <div class="hero-stack">
+        <div class="hero-text">
+          <div class="status-pill">
+            <span class="pulse-dot"></span> status: undetected
+          </div>
+          <h1 class="hero-title">demise</h1>
+          <p class="hero-desc">
+            silent aim, esp, visuals, and aimbot.
+          </p>
+          <div class="hero-buttons">
+            <button class="btn btn-primary" onclick="switchTab('download')">
+              download
+            </button>
+            <a href="https://discord.gg/KuSTGeyHEM" target="_blank" class="btn btn-secondary">
+              join discord
+            </a>
+          </div>
+        </div>
+
+        <!-- Actual Cheat Menu Screenshot -->
+        <div class="menu-showcase">
+          <div class="menu-screenshot-wrap">
+            <img src="menu.png" alt="demise cheat menu" class="menu-screenshot" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DOWNLOAD TAB -->
+    <section id="download" class="tab-content">
+      <div class="download-layout">
+        <h2 class="section-heading">download</h2>
+        
+        <div class="download-box">
+          <div class="download-main">
+            <h3>demise-loader.exe</h3>
+            <p class="meta">source: github | target: windows 10 / 11</p>
+            
+            <div class="dl-actions">
+              <a href="https://github.com/d-emise/demise-fr/archive/refs/heads/main.zip" class="btn btn-primary btn-large">
+                download (.zip)
+              </a>
+            </div>
+            
+            <div class="alert-box">
+              <strong>heads up:</strong> overlays read game memory, so windows defender or antivirus will probably flag this as a false positive. just run it as admin or add an exclusion if it eats the file.
+            </div>
+          </div>
+
+          <div class="guide-box">
+            <h3>how to run:</h3>
+            <ol class="guide-list">
+              <li>grab the exe from the download button.</li>
+              <li>run it as administrator so the overlay can draw properly.</li>
+              <li>join the discord to get configurations and share settings.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEVELOPER TAB -->
+    <section id="developer" class="tab-content">
+      <div class="developer-layout">
+        <h2 class="section-heading">about</h2>
+        
+        <div class="dev-card">
+          <div class="dev-main-text">
+            <p>hey, i'm <strong>belgium</strong>.</p>
+            <p>
+              i've been coding for a while. made a bunch of scripts in the past, mostly for trident survival.
+            </p>
+            <p>
+              i wanted to make a free external because i think paid everything is so stupid. charging monthly subscriptions for basic externals is so gay
+            </p>
+            <p>
+              demise is completely free and keyless. if you want configs or want to check if the cheat is updated, join the discord.
+            </p>
+            <div class="dev-cta">
+              <a href="https://discord.gg/KuSTGeyHEM" target="_blank" class="btn btn-primary">
+                join discord
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-wrap">
+      <p>demise project. developed by belgium.</p>
+      <p class="fineprint">made for educational research. use at your own discretion.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
