@@ -45,3 +45,31 @@ if (downloadBtn) {
     }
   });
 }
+
+// Docs Sidebar Navigation Logic
+const docLinks = document.querySelectorAll('.docs-sidebar-link');
+const docSections = document.querySelectorAll('.doc-section');
+
+docLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    const targetSection = link.getAttribute('data-section');
+    
+    // Update active class on sidebar links
+    docLinks.forEach(l => {
+      if (l.getAttribute('data-section') === targetSection) {
+        l.classList.add('active');
+      } else {
+        l.classList.remove('active');
+      }
+    });
+
+    // Update active class on doc content sections
+    docSections.forEach(sec => {
+      if (sec.id === `doc-${targetSection}`) {
+        sec.classList.add('active');
+      } else {
+        sec.classList.remove('active');
+      }
+    });
+  });
+});

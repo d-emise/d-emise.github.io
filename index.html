@@ -21,6 +21,7 @@
       <nav class="nav-links">
         <button class="nav-tab active" data-tab="home">home</button>
         <button class="nav-tab" data-tab="download">download</button>
+        <button class="nav-tab" data-tab="docs">docs</button>
         <button class="nav-tab" data-tab="developer">about</button>
       </nav>
       <div class="nav-actions">
@@ -93,6 +94,432 @@
               <li>join the discord to get configurations and share settings.</li>
             </ol>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DOCS TAB -->
+    <section id="docs" class="tab-content">
+      <div class="docs-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="docs-sidebar">
+          <ul class="docs-menu">
+            <li><button class="docs-sidebar-link active" data-section="intro">introduction</button></li>
+            <li><button class="docs-sidebar-link" data-section="callbacks">render loop</button></li>
+            <li><button class="docs-sidebar-link" data-section="drawing">drawing api</button></li>
+            <li><button class="docs-sidebar-link" data-section="imgui">imgui ui</button></li>
+            <li><button class="docs-sidebar-link" data-section="variables">cheat vars</button></li>
+            <li><button class="docs-sidebar-link" data-section="sdk">roblox sdk</button></li>
+            <li><button class="docs-sidebar-link" data-section="utils">utility functions</button></li>
+            <li><button class="docs-sidebar-link" data-section="customesp">custom esp guide</button></li>
+          </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="docs-body">
+          <section id="doc-intro" class="doc-section active">
+            <h2>introduction</h2>
+            <p>welcome to the demise scripting docs. this guide is here to show you how to write custom lua scripts to hook into the demise overlay, draw screen visuals, or build your own menu layouts.</p>
+            <p>the executor runs local lua 5.4 inside our rendering engine. since demise is an external cheat, it doesn't touch or inject into game memory directly. instead, it runs in a transparent window overlaid on top of your game, which keeps things much safer.</p>
+            
+            <div class="docs-note">
+              <strong>heads up:</strong> lua is case-sensitive. <code>aimbot.enabled</code> works, but <code>Aimbot.Enabled</code> will give you a nil error. since the entire api is lowercase, write all your code in lowercase.
+            </div>
+
+            <h3>how to run your first script:</h3>
+            <ol>
+              <li>open the cheat menu and click on the <code>lua</code> tab.</li>
+              <li>type: <code>print('hello from demise')</code> in the editor window.</li>
+              <li>click the <code>execute</code> button.</li>
+              <li>look at the <code>console</code> tab at the bottom to check the output logs.</li>
+            </ol>
+
+            <div class="docs-warning">
+              <strong>errors:</strong> if your code breaks, check the console. it will tell you the exact line number where the script failed (like <code>attempt to index a nil value</code>). read the error, it usually tells you exactly what you messed up.
+            </div>
+          </section>
+
+          <section id="doc-callbacks" class="doc-section">
+            <h2>render loop</h2>
+            <p>if you just execute a normal script, it runs once from top to bottom and stops immediately. to draw a crosshair, keep an esp box tracked on players, or show an interactive window, your code has to run continuously.</p>
+            <p>we use <code>on_render</code> to register a callback function that runs every frame (60+ times a second) when the overlay updates.</p>
+
+            <h3><code>on_render(callback_function)</code></h3>
+            <p>registers your function to run every frame. the cheat automatically clears the old callback whenever you click execute again, so you don't pile up background loops.</p>
+
+            <div class="docs-note">
+              <strong>critical concept: variable scope</strong><br>
+              if you define a variable <i>inside</i> your render function, it gets reset to its starting value 60 times a second. to keep track of counters, states, or toggles, you <strong>must</strong> define them <i>outside</i> the render loop.
+            </div>
+
+            <h3>bad vs good examples:</h3>
+            <p>don't do this (resets count to 0 every single frame):</p>
+            <pre><code>-- wrong way:
+on_render(function()
+    local count = 0
+    count = count + 1
+    draw_text("count: " .. tostring(count), 50, 100, color.fromRGB(255, 255, 255))
+end)</code></pre>
+
+            <p>do this instead (retains value correctly):</p>
+            <pre><code>-- right way:
+local count = 0
+on_render(function()
+    count = count + 1
+    draw_text("count: " .. tostring(count), 50, 100, color.fromRGB(255, 255, 255))
+end)</code></pre>
+
+            <div class="docs-warning">
+              <strong>performance warning:</strong> do not write heavy loops or recursive lookups inside <code>on_render</code>. searching the entire game tree every frame will lag the overlay frame rate. keep your render loop clean.
+            </div>
+          </section>
+
+          <section id="doc-drawing" class="doc-section">
+            <h2>drawing api</h2>
+            <p>the drawing api lets you paint 2d graphics directly on the screen overlay. coordinates start at <code>(0,0)</code> in the top-left corner of your display monitor. x goes right, and y goes down.</p>
+            <p>colors use the rgb/rgba format: <code>color.fromRGB(r, g, b, [a])</code> where each channel is a value from 0 to 255. alpha <code>a</code> is optional and defaults to 255 (fully solid).</p>
+
+            <h3>available drawing functions:</h3>
+            
+            <table class="docs-table">
+              <thead>
+                <tr>
+                  <th>function</th>
+                  <th>arguments</th>
+                  <th>description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>draw_line</code></td>
+                  <td><code>x1, y1, x2, y2, color, [thickness]</code></td>
+                  <td>draws a line between two screen points. thickness defaults to 1.0.</td>
+                </tr>
+                <tr>
+                  <td><code>draw_rect</code></td>
+                  <td><code>x, y, w, h, color, [thickness]</code></td>
+                  <td>draws a hollow box outline at (x,y) with width w and height h.</td>
+                </tr>
+                <tr>
+                  <td><code>draw_rect_filled</code></td>
+                  <td><code>x, y, w, h, color</code></td>
+                  <td>draws a solid filled box. useful for custom backgrounds.</td>
+                </tr>
+                <tr>
+                  <td><code>draw_circle</code></td>
+                  <td><code>x, y, radius, color, [segments], [thickness]</code></td>
+                  <td>draws a circle outline. use 32 or 64 segments so it looks round.</td>
+                </tr>
+                <tr>
+                  <td><code>draw_text</code></td>
+                  <td><code>text, x, y, color, [size]</code></td>
+                  <td>draws text. size is a float scale (default is 13.0).</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>example: drawing a center crosshair</h3>
+            <p>this script grabs the screen size, finds the center, and draws a small custom crosshairs overlay:</p>
+            <pre><code>on_render(function()
+    local w, h = get_screen_size()
+    local cx, cy = w / 2, h / 2
+    local green = color.fromRGB(0, 255, 66)
+    
+    -- draw cross lines (horizontal & vertical)
+    draw_line(cx - 8, cy, cx + 8, cy, green, 1.5)
+    draw_line(cx, cy - 8, cx, cy + 8, green, 1.5)
+end)</code></pre>
+          </section>
+
+          <section id="doc-imgui" class="doc-section">
+            <h2>imgui ui</h2>
+            <p>imgui is an immediate-mode ui library. unlike standard ui where you create elements and keep state references, immediate-mode ui is declared and redrawn from scratch every single frame inside your render callback.</p>
+            <p>if the code runs, the widget displays. if it doesn't, it vanishes. this makes scripting menus incredibly fast.</p>
+
+            <h3>how widgets return data:</h3>
+            <ul>
+              <li><code>imgui.button("label")</code>: returns <code>true</code> only on the frame it is clicked.</li>
+              <li><code>imgui.checkbox("label", state)</code>: returns the new state (boolean). you <strong>must</strong> assign this back to your toggle variable to update it.</li>
+              <li><code>imgui.slider_float("label", val, min, max)</code>: returns the new float value.</li>
+              <li><code>imgui.slider_int("label", val, min, max)</code>: returns the new integer value.</li>
+            </ul>
+
+            <div class="docs-note">
+              <strong>state saving:</strong> remember to store variables outside the render loop so they don't reset when the ui checks them every frame.
+            </div>
+
+            <h3>imgui functions:</h3>
+            <ul>
+              <li><code>imgui.begin_window(name)</code>: starts a new window container. returns true if open.</li>
+              <li><code>imgui.end_window()</code>: closes the current window container. must match begin.</li>
+              <li><code>imgui.text(label)</code>: prints a simple string in the window.</li>
+              <li><code>imgui.same_line()</code>: places the next widget next to the current one on the same line.</li>
+              <li><code>imgui.separator()</code>: draws a clean separation line.</li>
+            </ul>
+
+            <h3>example: custom cheat control window</h3>
+            <p>this script pops up a custom gui window that lets you toggle and scale cheat settings on the fly:</p>
+            <pre><code>local aim_state = false
+local fov_value = 100.0
+
+on_render(function()
+    imgui.begin_window("my test menu")
+    
+    -- capture the returns to update variables
+    aim_state = imgui.checkbox("toggle aimbot", aim_state)
+    fov_value = imgui.slider_float("fov setting", fov_value, 20.0, 300.0)
+    
+    -- write directly to the cheat variables
+    aimbot.enabled = aim_state
+    aimbot.fov = fov_value
+    
+    imgui.separator()
+    imgui.text("current aimbot state: " .. tostring(aimbot.enabled))
+    
+    imgui.end_window()
+end)</code></pre>
+          </section>
+
+          <section id="doc-variables" class="doc-section">
+            <h2>cheat vars</h2>
+            <p>you can read or write internal cheat settings directly using global tables. this lets your custom scripts toggle features or tweak settings dynamically.</p>
+
+            <h3>aimbot variables:</h3>
+            <table class="docs-table">
+              <thead>
+                <tr>
+                  <th>variable</th>
+                  <th>type</th>
+                  <th>description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>aimbot.enabled</code></td>
+                  <td>boolean</td>
+                  <td>toggles aimbot on or off.</td>
+                </tr>
+                <tr>
+                  <td><code>aimbot.aim_type</code></td>
+                  <td>integer</td>
+                  <td><code>0</code> for mouse, <code>1</code> for silent aim.</td>
+                </tr>
+                <tr>
+                  <td><code>aimbot.hitbox</code></td>
+                  <td>integer</td>
+                  <td>target part index (<code>0</code> head, <code>1</code> torso, etc.).</td>
+                </tr>
+                <tr>
+                  <td><code>aimbot.hitchance</code></td>
+                  <td>float</td>
+                  <td>hit probability percentage (0.0 to 100.0).</td>
+                </tr>
+                <tr>
+                  <td><code>aimbot.prediction</code></td>
+                  <td>boolean</td>
+                  <td>toggles aim prediction for moving targets.</td>
+                </tr>
+                <tr>
+                  <td><code>aimbot.fov</code></td>
+                  <td>float</td>
+                  <td>size of the aimbot fov circle in pixels.</td>
+                </tr>
+                <tr>
+                  <td><code>aimbot.smoothing_value</code></td>
+                  <td>float</td>
+                  <td>mouse movement damping / smoothing.</td>
+                </tr>
+                <tr>
+                  <td><code>aimbot.target_name</code></td>
+                  <td>string (read-only)</td>
+                  <td>name of the currently targeted player.</td>
+                </tr>
+                <tr>
+                  <td><code>aimbot.has_target</code></td>
+                  <td>boolean (read-only)</td>
+                  <td>returns true if locked onto someone.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>esp variables:</h3>
+            <ul>
+              <li><code>esp.enabled</code> (boolean): master visual switch.</li>
+              <li><code>esp.box</code> (boolean): toggles 2d box outline.</li>
+              <li><code>esp.name</code> (boolean): toggles player name tags.</li>
+              <li><code>esp.distance</code> (boolean): toggles distance logs.</li>
+              <li><code>esp.health_bar</code> (boolean): toggles health indicators.</li>
+              <li><code>esp.chams</code> (boolean): toggles filled player outlines.</li>
+              <li><code>esp.skeleton</code> (boolean): toggles skeleton bone lines.</li>
+              <li><code>esp.tracers</code> (boolean): toggles screen-bottom tracers.</li>
+            </ul>
+
+            <h3>movement variables:</h3>
+            <ul>
+              <li><code>movement.fly</code> (boolean): toggles fly mode.</li>
+              <li><code>movement.fly_speed</code> (float): fly velocity multiplier.</li>
+              <li><code>movement.noclip</code> (boolean): toggles character clipping.</li>
+            </ul>
+
+            <h3>example: hotkey toggle for fly mode</h3>
+            <p>this script checks if you press the <kbd>f</kbd> key and toggles fly mode on or off instantly:</p>
+            <pre><code>local fly_state = false
+local was_pressed = false
+
+on_render(function()
+    local is_pressed = is_key_down(0x46) -- 0x46 is the 'F' key
+    
+    -- detect the key down edge transition
+    if is_pressed and not was_pressed then
+        fly_state = not fly_state
+        movement.fly = fly_state
+        print("fly toggled: " .. tostring(fly_state))
+    end
+    was_pressed = is_pressed
+end)</code></pre>
+          </section>
+
+          <section id="doc-sdk" class="doc-section">
+            <h2>roblox sdk</h2>
+            <p>the roblox sdk wraps physical game objects (parts, workspaces, characters) as lua instances. the main entry point is the global object <code>game</code>.</p>
+            
+            <h3>instance properties:</h3>
+            <ul>
+              <li><code>inst.name</code> (string): name of the instance.</li>
+              <li><code>inst.class</code> (string): the exact engine class type (e.g. <code>"Part"</code>, <code>"Model"</code>).</li>
+              <li><code>inst.parent</code> (instance): parent object.</li>
+              <li><code>inst.children</code> (table): array of child instances inside this object.</li>
+              <li><code>inst.position</code> (vector3): 3d workspace coordinate (only if it's a part/model).</li>
+              <li><code>inst.is_valid</code> (boolean): returns false if the object has been destroyed or unloaded.</li>
+            </ul>
+
+            <div class="docs-warning">
+              <strong>crash prevention:</strong> roblox instances are dynamically created and destroyed. trying to read properties or call methods on an invalid instance will throw a script error or crash the overlay. always verify <code>inst.is_valid</code> first!
+            </div>
+
+            <h3>finding child elements:</h3>
+            <ul>
+              <li><code>inst:find_first_child(name)</code>: returns direct child matching the given name.</li>
+              <li><code>inst:find_first_child_of_class(classname)</code>: returns first child matching the class name.</li>
+            </ul>
+
+            <h3>casting instances with `as_humanoid()` / `as_player()`</h3>
+            <p>when you fetch generic instances from the game tree, they do not expose specific properties (like player character models or humanoid health states) by default. you must explicitly cast them first:</p>
+            <pre><code>local hum_inst = char:find_first_child_of_class("Humanoid")
+if hum_inst and hum_inst.is_valid then
+    -- cast the generic instance so you can access health
+    local humanoid = hum_inst:as_humanoid()
+    print("npc health: " .. humanoid.health)
+end</code></pre>
+          </section>
+
+          <section id="doc-utils" class="doc-section">
+            <h2>utility functions</h2>
+            <p>handy functions for viewport translations, keystroke queries, and local player references.</p>
+
+            <h3><code>get_screen_size()</code></h3>
+            <p>returns the width and height of the display monitor in pixels.</p>
+            <pre><code>local w, h = get_screen_size()</code></pre>
+
+            <h3><code>world_to_screen(vector3)</code></h3>
+            <p>translates a 3d coordinate from the game world into a 2d screen point. returns a vector2. if the coordinate is behind the camera view, it returns negative pixel positions.</p>
+            <pre><code>local point_2d = world_to_screen(part.position)
+if point_2d.x > 0 and point_2d.y > 0 then
+    -- draw on screen position
+end</code></pre>
+
+            <h3><code>is_key_down(vk_code)</code></h3>
+            <p>returns true if the key is held down. uses standard virtual key codes:</p>
+            <table class="docs-table">
+              <thead>
+                <tr>
+                  <th>key</th>
+                  <th>virtual keycode</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>left mouse click</td>
+                  <td><code>0x01</code></td>
+                </tr>
+                <tr>
+                  <td>right mouse click</td>
+                  <td><code>0x02</code></td>
+                </tr>
+                <tr>
+                  <td>shift key</td>
+                  <td><code>0x10</code></td>
+                </tr>
+                <tr>
+                  <td>ctrl key</td>
+                  <td><code>0x11</code></td>
+                </tr>
+                <tr>
+                  <td>spacebar</td>
+                  <td><code>0x20</code></td>
+                </tr>
+                <tr>
+                  <td><kbd>f</kbd> key</td>
+                  <td><code>0x46</code></td>
+                </tr>
+                <tr>
+                  <td><kbd>x</kbd> key</td>
+                  <td><code>0x58</code></td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="doc-customesp" class="doc-section">
+            <h2>custom esp guide</h2>
+            <p>here is a step-by-step guide to writing a custom esp overlay script for NPCs or specific items (like cash boxes, weapons, etc.).</p>
+            
+            <h3>step-by-step breakdown:</h3>
+            <ol>
+              <li>fetch the <code>Workspace</code> instance from <code>game</code> using <code>game:find_first_child("Workspace")</code>.</li>
+              <li>loop through its children using the <code>children</code> table.</li>
+              <li>check if the child's class is a <code>Model</code> (which includes player models and NPC models) or a <code>Part</code> (for items).</li>
+              <li>find its child part representing its physical location (like <code>HumanoidRootPart</code> or the main part).</li>
+              <li>convert its 3D position to 2D screen coordinate using <code>world_to_screen</code>.</li>
+              <li>check if it is on screen (x > 0 and y > 0) and draw graphics using <code>draw_circle</code> or <code>draw_text</code>.</li>
+            </ol>
+
+            <h3>complete npc esp script:</h3>
+            <pre><code>on_render(function()
+    local local_player = get_local_player()
+    local local_char = local_player.character
+    
+    -- get workspace
+    local workspace = game:find_first_child("Workspace")
+    if not workspace or not workspace.is_valid then return end
+    
+    -- traverse all workspace objects
+    for i, child in ipairs(workspace.children) do
+        -- make sure it's an NPC/player model, and not our own local character
+        if child.class == "Model" and child.address ~= local_char.address then
+            local humanoid = child:find_first_child_of_class("Humanoid")
+            local root_part = child:find_first_child("HumanoidRootPart")
+            
+            -- make sure target has a humanoid and root position part
+            if humanoid and root_part and root_part.is_valid then
+                -- translate 3D position to 2D screen coordinate
+                local pos_2d = world_to_screen(root_part.position)
+                
+                -- draw only if the target is visible on your screen
+                if pos_2d.x > 0 and pos_2d.y > 0 then
+                    -- draw green ESP circle overlay
+                    draw_circle(pos_2d.x, pos_2d.y, 8, color.fromRGB(0, 255, 66), 32, 1.5)
+                    
+                    -- draw text showing name and health
+                    local health = humanoid:as_humanoid().health
+                    local label = child.name .. " (" .. math.floor(health) .. " hp)"
+                    draw_text(label, pos_2d.x - 30, pos_2d.y - 25, color.fromRGB(255, 255, 255), 11.0)
+                end
+            end
+        end
+    end
+end)</code></pre>
+          </section>
         </div>
       </div>
     </section>
