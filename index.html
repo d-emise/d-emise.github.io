@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>enigma</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="description" content="enigma is an optimized external utility for roblox featuring customizable aimbot, silent aim, and esp visuals.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0c10;
+            --panel: #14151b;
+            --accent-pink: #ff007f;
+            --accent-cyan: #00f0ff;
+            --text-main: #c5c6c7;
+            --text-muted: #6f727d;
+            --border: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 0 20px;
+        }
+
+        /* --- Header --- */
+        header {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 20px;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--accent-pink);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .nav-links button, .nav-links a {
+            background: none;
+            border: none;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 0;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links button:hover, .nav-links a:hover {
+            color: var(--accent-cyan);
+        }
+
+        .nav-links button.active {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        /* --- Tab Layout Containers --- */
+        .tab-content {
+            display: none;
+            max-width: 900px;
+            margin: 0 auto;
+            min-height: calc(100vh - 250px);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* --- Hero (Home Tab) --- */
+        .hero {
+            padding: 120px 0 80px 0;
+        }
+
+        .hero h1 {
+            font-size: 40px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 span {
+            color: var(--accent-cyan);
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 14px;
+            max-width: 550px;
+            margin-bottom: 32px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn {
+            font-family: 'JetBrains Mono', monospace;
+            text-decoration: none;
+            padding: 12px 28px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--accent-pink);
+            color: #fff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #e00070;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        /* --- Features Tab --- */
+        .features-section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-size: 16px;
+            color: #fff;
+            margin-bottom: 30px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title span {
+            color: var(--accent-pink);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+            padding: 24px;
+        }
+
+        .feature-card h3 {
+            font-size: 14px;
+            color: #fff;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .feature-card h3 span {
+            color: var(--accent-cyan);
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* --- Download Tab --- */
+        .download-section {
+            padding: 80px 0;
+        }
+
+        .download-box {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 45px;
+            text-align: center;
+        }
+
+        .download-box h3 {
+            color: #fff;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .download-box p {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-bottom: 30px;
+        }
+
+        .download-meta {
+            margin-top: 24px;
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        /* --- Discord Profile Card (Creator Tab) --- */
+        .creator-section {
+            padding: 80px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .discord-profile {
+            width: 100%;
+            max-width: 360px;
+            background: #111214;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-family: sans-serif;
+            text-align: left;
+        }
+
+        .discord-banner {
+            height: 105px;
+            background: #000000;
+            position: relative;
+        }
+
+        .discord-actions {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .discord-action-btn {
+            background: rgba(0,0,0,0.5);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #b5bac1;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .discord-action-btn:hover {
+            color: #fff;
+        }
+
+        .discord-avatar-container {
+            position: relative;
+            margin-top: -45px;
+            margin-left: 20px;
+            display: inline-block;
+        }
+
+        .discord-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #5865f2;
+            border: 6px solid #111214;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .discord-avatar svg {
+            width: 48px;
+            height: 48px;
+            fill: #fff;
+        }
+
+        .discord-status {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #f23f43;
+            border: 4px solid #111214;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .discord-status::after {
+            content: '';
+            width: 6px;
+            height: 2px;
+            background: #111214;
+        }
+
+        .discord-body {
+            background: #1e1f22;
+            margin: 10px;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .discord-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .discord-name-sub {
+            font-size: 13px;
+            color: #b5bac1;
+            margin-bottom: 12px;
+        }
+
+        .discord-badges {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+            background: #111214;
+            padding: 4px 8px;
+            border-radius: 4px;
+            width: fit-content;
+            align-items: center;
+        }
+
+        .discord-badge {
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .discord-badge svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .discord-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.05);
+            margin: 12px 0;
+        }
+
+        .discord-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #b5bac1;
+            text-transform: lowercase;
+            margin-bottom: 8px;
+        }
+
+        .discord-status-text {
+            color: #dbdee1;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .discord-bio {
+            color: #dbdee1;
+            font-size: 13px;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .discord-msg-box {
+            background: #383a40;
+            border-radius: 4px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            color: #949ba4;
+            font-size: 13px;
+        }
+
+        /* --- Footer --- */
+        footer {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .footer-logo {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .footer-logo span {
+            color: var(--accent-pink);
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+            .hero {
+                padding: 60px 0;
+                text-align: center;
+            }
+            .hero h1 {
+                font-size: 32px;
+            }
+            .hero p {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .hero-actions {
+                justify-content: center;
+            }
+            footer {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <a href="#" onclick="switchTab('home')" class="logo"><img src="favicon.png" alt="" style="height: 22px; vertical-align: middle; margin-right: 8px; margin-top: -2px;">enigma<span>.</span></a>
+        <nav class="nav-links">
+            <button onclick="switchTab('home')" class="active" id="btn-home">home</button>
+            <button onclick="switchTab('features')" id="btn-features">features</button>
+            <a href="docs.html">docs</a>
+            <button onclick="switchTab('download')" id="btn-download">download</button>
+            <button onclick="switchTab('creator')" id="btn-creator">creator</button>
+            <a href="https://discord.gg/aFNWj5PkA" target="_blank">discord</a>
+        </nav>
+    </header>
+
+    <!-- TAB CONTENT: Home -->
+    <div id="tab-home" class="tab-content active">
+        <section class="hero">
+            <h1>enigma <span>external</span></h1>
+            <p>a free external cheat for roblox featuring aimbot, silent aim, esp, and a lua executor.</p>
+            <div class="hero-actions">
+                <button onclick="switchTab('download')" class="btn btn-primary">download</button>
+                <a href="https://discord.gg/aFNWj5PkA" target="_blank" class="btn btn-secondary">discord</a>
+            </div>
+        </section>
+    </div>
+
+    <!-- TAB CONTENT: Features -->
+    <div id="tab-features" class="tab-content">
+        <section class="features-section">
+            <h2 class="section-title"><span>//</span> features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3><span>01 /</span> aimbot & silent aim</h3>
+                    <p>aimbot with fov, smoothing, and bone selection. silent aim redirects your shots to the target.</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span>02 /</span> visuals</h3>
+                    <p>customizable 2d boxes, text labels, healthbars, distance metrics, and customizable outline/mesh chams.</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span>03 /</span> lua executor</h3>
+                    <p>allows reading and writing virtual memory addresses, traversing the roblox instance hierarchy, and drawing custom screen overlays.</p>
+                </div>
+                <div class="feature-card">
+                    <h3><span>04 /</span> phantom forces support</h3>
+                    <p>full support for phantom forces, including full compatibility for silent aim and esp visuals.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- TAB CONTENT: Download -->
+    <div id="tab-download" class="tab-content">
+        <section class="download-section">
+            <h2 class="section-title"><span>//</span> download</h2>
+            <div class="download-box">
+                <h3>get enigma</h3>
+                <div class="hero-actions" style="justify-content: center; flex-wrap: wrap;">
+                    <a href="https://github.com/d-emise/enigma/raw/main/Loader.exe" class="btn btn-primary">download loader</a>
+                    <a href="https://discord.gg/aFNWj5PkA" target="_blank" class="btn btn-secondary">discord server</a>
+                </div>
+                <div class="download-meta">
+                    <span>size: ~1.2 mb</span>
+                    <span>system: windows 10 / 11</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- TAB CONTENT: Creator -->
+    <div id="tab-creator" class="tab-content">
+        <section class="creator-section">
+            <!-- Discord Profile Card -->
+            <div class="discord-profile">
+                <!-- Header Banner -->
+                <div class="discord-banner">
+                    <div class="discord-actions">
+                        <button class="discord-action-btn" title="add friend">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                        </button>
+                        <button class="discord-action-btn" title="more info">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Avatar with status -->
+                <div class="discord-avatar-container">
+                    <div class="discord-avatar">
+                        <svg viewBox="0 0 127.14 96.36">
+                            <path d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a77.7,77.7,0,0,0,6.63-10.85,68.43,68.43,0,0,1-10.45-5c.87-.64,1.72-1.32,2.53-2a75.48,75.48,0,0,0,72.82,0c.81.7,1.66,1.38,2.53,2a68.61,68.61,0,0,1-10.46,5,77.49,77.49,0,0,0,6.63,10.85,105.73,105.73,0,0,0,31.06-18.83C129.07,50.29,122.9,27.52,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z"/>
+                        </svg>
+                    </div>
+                    <div class="discord-status" title="do not disturb"></div>
+                </div>
+
+                <!-- Main Card Details -->
+                <div class="discord-body">
+                    <div class="discord-name">
+                        belgium
+                    </div>
+                    <div class="discord-name-sub">
+                        ineedur.skin
+                    </div>
+
+                    <!-- Badges -->
+                    <div class="discord-badges">
+                        <!-- Nitro Badge -->
+                        <div class="discord-badge" title="nitro subscriber">
+                            <svg viewBox="0 0 24 24" fill="#ff73fa"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4M12,18C8.69,18 6,15.31 6,12C6,10.09 6.9,8.38 8.3,7.27L9.7,8.67C8.66,9.45 8,10.65 8,12C8,14.2 9.8,16 12,16C14.2,16 16,14.2 16,12C16,10.65 15.34,9.45 14.3,8.67L15.7,7.27C17.1,8.38 18,10.09 18,12C18,15.31 15.31,18 12,18Z"/></svg>
+                        </div>
+                        <!-- Server Booster Badge -->
+                        <div class="discord-badge" title="server booster">
+                            <svg viewBox="0 0 24 24" fill="#ff73fa"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.4 8.168L12 18.896l-7.334 3.87 1.4-8.168L.132 9.21l8.2-1.192L12 .587z"/></svg>
+                        </div>
+                        <!-- Active Developer Badge -->
+                        <div class="discord-badge" title="active developer">
+                            <svg viewBox="0 0 24 24" fill="#248046"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="discord-divider"></div>
+
+                    <!-- Custom Status -->
+                    <div class="discord-status-text">
+                        i take a xanie for peep
+                    </div>
+
+                    <div class="discord-divider"></div>
+
+                    <!-- About Me Bio -->
+                    <div class="discord-section-title">about me</div>
+                    <div class="discord-bio">
+                        im belgium i origionally started out making lua scripts, primiarly for trident survival, i had a very good script at the time, i stopped coding for a while and ended up getting into cpp, and externals. i just wanna show my work to the world its free no key or anything i would just like you to join my discord and prove me feedback
+                    </div>
+
+                    <!-- Text input mockup -->
+                    <div class="discord-msg-box">
+                        <span>message @belgium</span>
+                        <span>&#128578;</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <a href="#" onclick="switchTab('home')" class="footer-logo">enigma<span>.</span></a>
+        <span>&copy; 2026 enigma cheat. all rights reserved.</span>
+    </footer>
+
+    <!-- Tab Logic -->
+    <script>
+        function switchTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            // Show requested tab content
+            document.getElementById('tab-' + tabId).classList.add('active');
+
+            // Deactivate all navigation buttons
+            document.querySelectorAll('.nav-links button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Activate active navigation button (if exists)
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>

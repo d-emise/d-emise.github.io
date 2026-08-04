@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>enigma - docs</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0c10;
+            --panel: #14151b;
+            --accent-pink: #ff007f;
+            --accent-cyan: #00f0ff;
+            --text-main: #c5c6c7;
+            --text-muted: #6f727d;
+            --border: rgba(255, 255, 255, 0.05);
+            --code-bg: #0f1015;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        /* --- Sidebar Navigation --- */
+        aside {
+            width: 280px;
+            border-right: 1px solid var(--border);
+            padding: 40px 20px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .aside-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 20px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .aside-title span {
+            color: var(--accent-pink);
+        }
+
+        .back-link {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-bottom: 30px;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--accent-cyan);
+        }
+
+        .menu-group {
+            margin-bottom: 24px;
+        }
+
+        .menu-group-title {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .menu-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu-links a {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .menu-links a:hover {
+            color: var(--accent-cyan);
+        }
+
+        /* --- Main Content --- */
+        main {
+            flex: 1;
+            padding: 40px 40px 80px 40px;
+            max-width: 900px;
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #fff;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .lead {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h2 {
+            font-size: 20px;
+            color: #fff;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        h2::before {
+            content: '//';
+            color: var(--accent-pink);
+        }
+
+        h3 {
+            font-size: 15px;
+            color: #fff;
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        ul.bullets {
+            list-style: none;
+            margin-bottom: 16px;
+            padding-left: 10px;
+        }
+
+        ul.bullets li {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: flex;
+            gap: 8px;
+        }
+
+        ul.bullets li::before {
+            content: '-';
+            color: var(--accent-cyan);
+        }
+
+        .api-card {
+            background: var(--panel);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .api-signature {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-bottom: 12px;
+        }
+
+        .api-desc {
+            color: var(--text-main);
+            font-size: 13px;
+            margin-bottom: 16px;
+        }
+
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+            font-size: 12px;
+        }
+
+        .param-table th, .param-table td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .param-table th {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .param-name {
+            color: var(--accent-pink);
+        }
+
+        .param-type {
+            color: var(--accent-cyan);
+        }
+
+        pre {
+            background: var(--code-bg);
+            border-left: 2px solid var(--accent-pink);
+            padding: 14px 18px;
+            border-radius: 0 4px 4px 0;
+            font-size: 12px;
+            overflow-x: auto;
+            color: #a9b7c6;
+            margin-top: 12px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* --- Scrollbar --- */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-pink);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside>
+            <a href="index.html" class="aside-title">enigma<span>.docs</span></a>
+            <a href="index.html" class="back-link">&lt;- back to home</a>
+            
+            <div class="menu-group">
+                <div class="menu-group-title">concepts</div>
+                <ul class="menu-links">
+                    <li><a href="#understanding-memory">roblox memory structure</a></li>
+                </ul>
+            </div>
+
+            <div class="menu-group">
+                <div class="menu-group-title">base api</div>
+                <ul class="menu-links">
+                    <li><a href="#console">console & prints</a></li>
+                    <li><a href="#draw">drawing utils</a></li>
+                </ul>
+            </div>
+
+            <div class="menu-group">
+                <div class="menu-group-title">raw memory</div>
+                <ul class="menu-links">
+                    <li><a href="#memory-operations">reading & writing</a></li>
+                </ul>
+            </div>
+
+            <div class="menu-group">
+                <div class="menu-group-title">hierarchy</div>
+                <ul class="menu-links">
+                    <li><a href="#roots">get roots</a></li>
+                    <li><a href="#navigation">finding children</a></li>
+                </ul>
+            </div>
+
+            <div class="menu-group">
+                <div class="menu-group-title">parts & properties</div>
+                <ul class="menu-links">
+                    <li><a href="#properties">manipulators</a></li>
+                    <li><a href="#utilities">state helpers</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main>
+            <h1>enigma API reference</h1>
+            <p class="lead">complete specification for the enigma external script executor. use this reference to interact with instance structures, write properties, render overlays, or read/write memory directly.</p>
+
+            <!-- Memory Architecture Section -->
+            <section id="understanding-memory">
+                <h2>understanding roblox memory structures</h2>
+                <p>Because enigma is an <strong>external</strong> utility, it does not run inside the game client's Lua state. It interacts directly with the game process's virtual memory.</p>
+                <p>Every object in the game is an <code>Instance</code>. In memory, instances are represented as pointers. An instance pointer contains offsets pointing to its Name, ClassName, Parent, and a linked list of its Children.</p>
+                
+                <h3>how physical parts are structured:</h3>
+                <p>Physical parts (like a <code>Part</code>, <code>MeshPart</code>, or <code>WedgePart</code>) contain a pointer to a <code>Primitive</code> struct. The primitive struct is where physics, scale, position, and rotation are calculated. To change a part's physical position externally, you read the primitive pointer from the part and write directly to the primitive's position offset.</p>
+            </section>
+
+            <!-- Base API -->
+            <section id="console">
+                <h2>console & prints</h2>
+                <p>basic console operations used for debugging and displaying logs inside the script GUI window.</p>
+                
+                <div class="api-card">
+                    <div class="api-signature">print(...) / enigma.log(string text)</div>
+                    <div class="api-desc">writes a string to the enigma executor console log. <code>print()</code> accepts numbers, booleans, and strings.</div>
+                    <pre><code>print("local player name: " .. enigma.get_player_name())
+enigma.log("teleport executed successfully")</code></pre>
+                </div>
+
+                <div class="api-card">
+                    <div class="api-signature">enigma.clear_console()</div>
+                    <div class="api-desc">clears all text entries currently outputted to the console window.</div>
+                    <pre><code>enigma.clear_console()</code></pre>
+                </div>
+            </section>
+
+            <!-- Drawing Overlays -->
+            <section id="draw">
+                <h2>drawing api</h2>
+                <p>the drawing api outputs shapes directly onto the enigma DirectX overlay. drawings are cleared and updated every frame.</p>
+
+                <div class="api-card">
+                    <div class="api-signature">enigma.draw_line(x1, y1, x2, y2, r, g, b, a, thickness)</div>
+                    <div class="api-desc">renders a 2D line between two screen positions.</div>
+                    <table class="param-table">
+                        <tr><th>param</th><th>type</th><th>description</th></tr>
+                        <tr><td class="param-name">x1, y1</td><td class="param-type">float</td><td>start screen position</td></tr>
+                        <tr><td class="param-name">x2, y2</td><td class="param-type">float</td><td>end screen position</td></tr>
+                        <tr><td class="param-name">r, g, b, a</td><td class="param-type">int</td><td>RGBA color colors (0 to 255)</td></tr>
+                        <tr><td class="param-name">thickness</td><td class="param-type">float</td><td>line width in pixels</td></tr>
+                    </table>
+                    <pre><code>enigma.draw_line(100, 100, 300, 100, 255, 0, 127, 255, 2.0)</code></pre>
+                </div>
+
+                <div class="api-card">
+                    <div class="api-signature">enigma.draw_circle(x, y, radius, r, g, b, a, thickness, filled)</div>
+                    <div class="api-desc">renders a circle outline or a solid filled circle.</div>
+                    <table class="param-table">
+                        <tr><th>param</th><th>type</th><th>description</th></tr>
+                        <tr><td class="param-name">x, y</td><td class="param-type">float</td><td>center screen position</td></tr>
+                        <tr><td class="param-name">radius</td><td class="param-type">float</td><td>circle radius in pixels</td></tr>
+                        <tr><td class="param-name">r, g, b, a</td><td class="param-type">int</td><td>RGBA color</td></tr>
+                        <tr><td class="param-name">thickness</td><td class="param-type">float</td><td>outline border width (ignored if filled is true)</td></tr>
+                        <tr><td class="param-name">filled</td><td class="param-type">bool</td><td>true draws a solid filled circle, false draws an outline</td></tr>
+                    </table>
+                    <pre><code>-- draw target aim fov circle
+enigma.draw_circle(960, 540, 150, 0, 240, 255, 255, 1.5, false)</code></pre>
+                </div>
+
+                <div class="api-card">
+                    <div class="api-signature">enigma.draw_rect(x1, y1, x2, y2, r, g, b, a, thickness, filled)</div>
+                    <div class="api-desc">renders a rectangle from top-left (x1, y1) to bottom-right (x2, y2).</div>
+                    <pre><code>enigma.draw_rect(10, 10, 200, 60, 20, 20, 25, 200, 1.0, true) -- solid background
+enigma.draw_rect(10, 10, 200, 60, 255, 0, 127, 255, 1.5, false) -- hot pink outline</code></pre>
+                </div>
+
+                <div class="api-card">
+                    <div class="api-signature">enigma.draw_text(x, y, text, r, g, b, a)</div>
+                    <div class="api-desc">draws simple text on the screen overlay starting from the top-left (x, y) coordinates.</div>
+                    <pre><code>enigma.draw_text(20, 20, "enigma engine active", 0, 240, 255, 255)</code></pre>
+                </div>
+            </section>
+
+            <!-- Memory Reading and Writing -->
+            <section id="memory-operations">
+                <h2>raw memory operations</h2>
+                <p>These functions let you read and write directly to virtual memory addresses. Addresses are 64-bit unsigned integers (represented as numbers in Lua).</p>
+                <div class="api-card">
+                    <div class="api-signature">enigma.read_byte / read_int / read_float / read_double / read_qword(uint64 address)</div>
+                    <div class="api-desc">reads the value at the given memory address and returns it.
+                        <ul class="bullets" style="margin-top: 10px;">
+                            <li><code>read_byte</code>: reads 1 byte (uint8)</li>
+                            <li><code>read_int</code>: reads 4 bytes (int32)</li>
+                            <li><code>read_float</code>: reads 4 bytes float (single precision)</li>
+                            <li><code>read_double</code>: reads 8 bytes float (double precision)</li>
+                            <li><code>read_qword</code>: reads 8 bytes pointer/unsigned integer (uint64)</li>
+                        </ul>
+                    </div>
+                    <pre><code>local address = 0x140e83bf8
+local val = enigma.read_int(address)</code></pre>
+                </div>
+
+                <div class="api-card">
+                    <div class="api-signature">enigma.read_string(uint64 address)</div>
+                    <div class="api-desc">reads a null-terminated string at the specified memory address.</div>
+                    <pre><code>local name = enigma.read_string(player_address + 0x48)</code></pre>
+                </div>
+
+                <div class="api-card">
+                    <div class="api-signature">enigma.write_byte / write_int / write_float / write_double / write_qword(uint64 address, value)</div>
+                    <div class="api-desc">writes a value to the specified virtual memory address.</div>
+                    <pre><code>-- write gravity modification (workspace + world + steps offset)
+local world = enigma.read_qword(enigma.get_workspace() + 0x148)
+enigma.write_float(world + 0x130, 35.0)</code></pre>
+                </div>
+
+                <div class="api-card">
+                    <div class="api-signature">enigma.write_string(uint64 address, string value)</div>
+                    <div class="api-desc">writes a string buffer directly to the memory address.</div>
+                    <pre><code>enigma.write_string(part_address + 0x28, "CustomLimb")</code></pre>
+                </div>
+            </section>
+
+            <!-- Workspace Traversal -->
+            <section id="roots">
+                <h2>get roots</h2>
+                <p>helper functions to retrieve base root pointers in memory.</p>
+                <div class="api-card">
+                    <div class="api-signature">enigma.get_workspace() / enigma.get_players()</div>
+                    <div class="api-desc">returns the base memory address of the Workspace instance or the Players service. Use these as your parent addresses to begin traversing.</div>
+                    <pre><code>local workspace_addr = enigma.get_workspace()
+local players_service = enigma.get_players()</code></pre>
+                </div>
+            </section>
+
+            <section id="navigation">
+                <h2>instance traversal</h2>
+                <p>traverses the roblox instance hierarchy by reading the linked lists of child pointers in memory.</p>
+                
+                <div class="api-card">
+                    <div class="api-signature">enigma.find_first_child(uint64 parent, string name)</div>
+                    <div class="api-desc">searches for a child by name and returns its address. returns nil if not found.</div>
+                    <pre><code>local workspace = enigma.get_workspace()
+local camera = enigma.find_first_child(workspace, "Camera")
+if camera then
+    print("found camera at: " .. camera)
+end</code></pre>
+                </div>
+
+                <div class="api-card">
+                    <div class="api-signature">enigma.find_first_child_of_class(uint64 parent, string className)</div>
+                    <div class="api-desc">searches for a child containing the exact ClassName and returns its address.</div>
+                    <pre><code>local local_player = enigma.read_qword(enigma.get_players() + 0x118)
+local backpack = enigma.find_first_child_of_class(local_player, "Backpack")</code></pre>
+                </div>
+
+                <div class="api-card">
+                    <div class="api-signature">enigma.get_children(uint64 parent)</div>
+                    <div class="api-desc">returns an array table containing the addresses of all children of the instance.</div>
+                    <pre><code>local children = enigma.get_children(enigma.get_workspace())
+for index, child_addr in ipairs(children) do
+    local name = enigma.get_name(child_addr)
+    local class = enigma.get_class_name(child_addr)
+    print("[" .. index .. "] " .. name .. " (" .. class .. ")")
+end</code></pre>
+                </div>
+
+                <div class="api-card">
+                    <div class="api-signature">enigma.get_name(uint64 instance) / enigma.get_class_name(uint64 instance) / enigma.get_parent(uint64 instance)</div>
+                    <div class="api-desc">helper wrappers to read name, classname, or parent pointers of any instance.</div>
+                    <pre><code>local name = enigma.get_name(part_addr)
+local parent = enigma.get_parent(part_addr)</code></pre>
+                </div>
+            </section>
+
+            <!-- Manipulators -->
+            <section id="properties">
+                <h2>part manipulators</h2>
+                <p>convenient manipulators that automatically resolve the part's primitive pointer in memory and perform offsets math.</p>
+
+                <div class="api-card">
+                    <div class="api-signature">enigma.get_position(uint64 part) / enigma.set_position(uint64 part, float x, float y, float z)</div>
+                    <div class="api-desc">retrieves or sets the physical coordinates of a part.</div>
+                    <pre><code>-- Teleport player up by 20 studs
+local hrp = enigma.find_first_child(char_addr, "HumanoidRootPart")
+if hrp then
+    local x, y, z = enigma.get_position(hrp)
+    enigma.set_position(hrp, x, y + 20.0, z)
+end</code></pre>
+                </div>
+
+                <div class="api-card">
+                    <div class="api-signature">enigma.get_size(uint64 part) / enigma.set_size(uint64 part, float x, float y, float z)</div>
+                    <div class="api-desc">retrieves or sets the scale size of a part in studs.</div>
+                    <pre><code>-- expand a player's head hitbox size to 10x10x10 studs
+local head = enigma.find_first_child(char_addr, "Head")
+if head then
+    enigma.set_size(head, 10.0, 10.0, 10.0)
+end</code></pre>
+                </div>
+
+                <div class="api-card">
+                    <div class="api-signature">enigma.get_rotation(uint64 part) / enigma.set_rotation(uint64 part, float m11, float m12, ... float m33)</div>
+                    <div class="api-desc">gets or sets the 3x3 rotation matrix for the part. <code>get_rotation</code> returns an array table of 9 matrix coefficients. <code>set_rotation</code> accepts 9 numbers in order.</div>
+                    <pre><code>-- reset rotation matrix of a part back to identity matrix
+enigma.set_rotation(part_addr, 
+    1.0, 0.0, 0.0, 
+    0.0, 1.0, 0.0, 
+    0.0, 0.0, 1.0
+)</code></pre>
+                </div>
+            </section>
+
+            <!-- State Utilities -->
+            <section id="utilities">
+                <h2>client state utilities</h2>
+                <p>wrappers to inspect and modify client configurations on the fly.</p>
+                <div class="api-card">
+                    <div class="api-signature">enigma.get(string key) / enigma.set(string key, value)</div>
+                    <div class="api-desc">reads or sets the active state of features within the enigma client settings. Check index.html for valid feature keys (e.g. <code>aimbot_enabled</code>, <code>silent_enabled</code>, <code>silent_fov</code>).</div>
+                    <pre><code>-- automatically activate silent aim and adjust FOV to 180
+enigma.set("silent_enabled", true)
+enigma.set("silent_fov", 180.0)</code></pre>
+                </div>
+
+                <div class="api-card">
+                    <div class="api-signature">enigma.get_cursor_pos()</div>
+                    <div class="api-desc">returns <code>x, y</code> representing the current desktop cursor screen coordinates in pixels.</div>
+                    <pre><code>local cur_x, cur_y = enigma.get_cursor_pos()</code></pre>
+                </div>
+
+                <div class="api-card">
+                    <div class="api-signature">enigma.get_player_name() / enigma.get_place_id()</div>
+                    <div class="api-desc">returns the logged in local player username or active PlaceId.</div>
+                    <pre><code>local place = enigma.get_place_id()
+if place == 292439477 then
+    enigma.log("Phantom Forces session detected")
+end</code></pre>
+                </div>
+            </section>
+        </main>
+    </div>
+
+</body>
+</html>
